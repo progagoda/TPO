@@ -1,7 +1,7 @@
 package asin;
 
 public class AsinTeilor{
-    public Double calculate(Double x) throws NullPointerException{
+    public Double calculate(Double x){
         if (!validate(x)){
             return null;
         }
