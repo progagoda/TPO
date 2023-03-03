@@ -1,75 +1,65 @@
 package skewheap;
 
-import skewheap.exceptions.EmptyHeapException;
+import java.util.NoSuchElementException;
 
-import java.util.ArrayList;
-import java.util.List;
+public class SkewHeap {
+    private Node root;
+    private static class Node {
+        Double value;
+        Node left;
+        Node right;
 
-public class SkewHeap{
-
-    public Double key;
-    public SkewHeap ltree;
-    public SkewHeap rtree;
-
-    public SkewHeap merge(SkewHeap h1, SkewHeap h2) throws EmptyHeapException{
-        if (h1 == null){
-            return h2;
+        Node(Double value) {
+            this.value = value;
+            this.left = null;
+            this.right = null;
         }
-        if (h2 == null){
-            return h1;
-        }
-        if (h1 == null && h2 == null){
-            throw new EmptyHeapException();
-        }
-
-        if (h1.key > h2.key){
-            SkewHeap temp = h1;
-            h1 = h2;
-            h2 = temp;
-        }
-
-        SkewHeap temp = h1.ltree;
-        h1.ltree = h1.rtree;
-        h1.rtree = temp;
-
-        h1.ltree = merge(h2, h1.ltree);
-        return h1;
     }
 
-    public SkewHeap construct(SkewHeap root, List<Double> heap) throws EmptyHeapException {
-        if (heap == null){
-            return root;
+    public SkewHeap() {
+
+    }
+    public void add(Double value) {
+        Node current = new Node(value);
+        root = merge(root,current);
+    }
+    public Double removeMin() {
+        if(empty()){
+            throw new NoSuchElementException();
         }
-        SkewHeap temp;
-        for (int i = 0; i < heap.size(); i++){
-            temp = new SkewHeap();
-            temp.key = heap.get(i);
-            root = merge(root, temp);
+        else{
+            Double min = root.value;
+            root = merge(root.left, root.right);
+            return min;
         }
-        return root;
+    }
+    public boolean empty() {
+        return root == null;
+    }
+    public void merge(SkewHeap other) {
+        if(other != null){
+            this.root = merge(this.root, other.root);
+            other.root = null;
+        }
     }
 
-    public Integer size(){
-        return size(this, 0);
-    }
-
-    private Integer size(SkewHeap root, Integer cnt){
-        if (root == null){
-            return 0;
+    private Node merge(Node root1, Node root2) {
+        Node firstRoot = root1;
+        Node secondRoot = root2;
+        if(firstRoot == null){
+            return secondRoot;
+        }else if(secondRoot == null){
+            return firstRoot;
         }
-        cnt += size(root.ltree, cnt);
-        cnt += size(root.rtree, cnt);
-        cnt++;
-        return cnt;
-    }
-
-    public String view(SkewHeap root, String ans){
-        if (root == null){
-            return "";
+        if(firstRoot.value <= secondRoot.value){
+            Node temp = firstRoot.right;
+            firstRoot.right = firstRoot.left;
+            firstRoot.left = merge(secondRoot,temp);
+            return firstRoot;
         }
-        ans += view(root.ltree, ans);
-        ans += root.key + "  ";
-        ans += view(root.rtree, ans);
-        return ans;
+        else{
+            return merge(secondRoot,firstRoot);
+        }
+
     }
 }
