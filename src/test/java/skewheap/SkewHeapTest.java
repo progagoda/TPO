@@ -16,11 +16,6 @@ public class SkewHeapTest {
        assertEquals(skewHeap.construct(skewHeap, null), skewHeap);
        List<Double> elems = Arrays.asList(1d,2d,3d);
        skewHeap = skewHeap.construct(skewHeap, elems);
-<<<<<<< HEAD
-
-=======
-       
->>>>>>> 992b9fc784a5c833c3003a9057cb4c9fcc467e3f
     }
 
 }
