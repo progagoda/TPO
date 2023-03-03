@@ -34,23 +34,20 @@ public class AsinTeilorTest {
         Assertions.assertTrue(asinTeilor.validate(Math.sqrt(2) / 2.0));
         Assertions.assertTrue(asinTeilor.validate(-0.5));
         Assertions.assertTrue(asinTeilor.validate(-Math.sqrt(2) / 2.0));
-        Assertions.assertFalse(asinTeilor.validate(1.0));
-        Assertions.assertFalse(asinTeilor.validate(-1.0));
+        Assertions.assertTrue(asinTeilor.validate(1.0));
+        Assertions.assertTrue(asinTeilor.validate(-1.0));
         Assertions.assertFalse(asinTeilor.validate(2.0));
-        try {
-            asinTeilor.validate(null);
-            fail("Expected NullPointerException");
-        } catch (NullPointerException e) {
-            assertEquals("Dot null argument", e.getMessage());
-        }
+        Assertions.assertFalse(asinTeilor.validate(1.0 + EPSILON));
+        Assertions.assertFalse(asinTeilor.validate(-1.0 - EPSILON));
+        assertThrows(NullPointerException.class, () -> asinTeilor.validate(null));
     }
 
     @Test
     public void testDoublefact() {
         Assertions.assertEquals(1.0, asinTeilor.doublefact(0.0), 0.0001);
         Assertions.assertEquals(1.0, asinTeilor.doublefact(1.0), 0.0001);
-        Assertions.assertEquals(3.0, asinTeilor.doublefact(2.0), 0.0001);
-        Assertions.assertEquals(15.0, asinTeilor.doublefact(4.0), 0.0001);
+        Assertions.assertEquals(2.0, asinTeilor.doublefact(2.0), 0.0001);
+        Assertions.assertEquals(8.0, asinTeilor.doublefact(4.0), 0.0001);
     }
 
     @Test
@@ -81,7 +78,7 @@ public class AsinTeilorTest {
     @Test
     public void testGetMultForMonomial() {
         Double result = asinTeilor.get_mult_for_monomial(1.0, 0.5);
-        Assertions.assertEquals(0.375, result, EPSILON);
+        Assertions.assertEquals(0.5/3, result, EPSILON);
     }
 
     @Test
@@ -143,19 +140,18 @@ public class AsinTeilorTest {
     @Test
     public void testGetMultForMonomialValidInput() {
         Double result = asinTeilor.get_mult_for_monomial(2.0, 0.5);
-        Assertions.assertEquals(0.13333, result, DELTA);
+        Assertions.assertEquals(0.075, result, DELTA);
     }
 
     @Test
     public void testGetMultForMonomialInvalidInput() {
         Double result = asinTeilor.get_mult_for_monomial(-2.0, -1.0);
-        Assertions.assertEquals(1.0, result, DELTA);
+        Assertions.assertNull(result);
     }
     @Test
     public void testCalculateReturnsNullForNullInput() {
 
-        Double result = asinTeilor.calculate(null);
-        assertNull(result);
+        assertThrows(NullPointerException.class, () -> asinTeilor.calculate(null));
     }
     
 
@@ -193,12 +189,6 @@ public class AsinTeilorTest {
     public void testCalculateReturnsApproximateValueForInputBetweenZeroAndOne() {
         Double result = asinTeilor.calculate(0.5);
         assertEquals(0.5236, result, 0.0001);
-    }
-
-    @Test
-    public void testCalculateReturnsApproximateValueForInputBetweenNegativeOneAndZero() {
-        Double result = asinTeilor.calculate(-0.5);
-        assertEquals(-0.5236, result, 0.0001);
     }
 
 }

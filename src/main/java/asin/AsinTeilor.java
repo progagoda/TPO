@@ -14,7 +14,7 @@ public class AsinTeilor{
             current_monomial *= get_mult_for_monomial(n, x);
             result_sum += current_monomial;
             n += 1D;
-        } while (current_monomial > 0.001);
+        } while (Math.abs(current_monomial) > 0.001);
         return result_sum;
     }
 
@@ -59,6 +59,9 @@ public class AsinTeilor{
     public Double get_mult_for_monomial(Double n, Double x){
         if (n == 0){
             return 1D;
+        }
+        if (n < 0){
+            return null;
         }
         Double numerator = 0D;
         Double denominator = 1D;
