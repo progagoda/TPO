@@ -18,7 +18,7 @@ public class AsinTeilor{
         return result_sum;
     }
 
-    private boolean validate(Double x) throws NullPointerException {
+    public boolean validate(Double x) throws NullPointerException {
         if (x == null) {
             throw new NullPointerException("Dot null argument");
         }
@@ -27,7 +27,7 @@ public class AsinTeilor{
         }
         return true;
     }
-    private Double doublefact(Double x){
+    public Double doublefact(Double x){
         if (x <= 1){
             return 1D;
         }
@@ -44,7 +44,7 @@ public class AsinTeilor{
 
         return accum;
     }
-    private Double fact(Double x){
+    public Double fact(Double x){
         if (x <= 1){
             return 1D;
         }
@@ -56,7 +56,7 @@ public class AsinTeilor{
         }
         return accum;
     }
-    private Double get_mult_for_monomial(Double n, Double x){
+    public Double get_mult_for_monomial(Double n, Double x){
         if (n == 0){
             return 1D;
         }
