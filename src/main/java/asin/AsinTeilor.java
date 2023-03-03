@@ -17,11 +17,12 @@ public class AsinTeilor{
         } while (current_monomial > 0.001);
         return result_sum;
     }
-    private boolean validate(Double x) throws NullPointerException{
+
+    private boolean validate(Double x) throws NullPointerException {
         if (x == null) {
             throw new NullPointerException("Dot null argument");
         }
-        if (Math.abs(x) > 1){
+        if (Math.abs(x) > 1) {
             return false;
         }
         return true;
