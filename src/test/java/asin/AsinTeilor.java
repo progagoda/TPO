@@ -1,4 +1,5 @@
 package asin;
+import org.junit.Before;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import static org.junit.jupiter.api.Assertions.*;
@@ -8,6 +9,12 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 public class AsinTeilor {
     private static final double EPSILON = 0.001;
     private static final double DELTA = 0.0001;
+    private AsinTeilor asinTeilor;
+
+    @Before
+    public void setUp() {
+        asinTeilor = new AsinTeilor();
+    }
     @Test
     public void testCalculate() {
         AsinTeilor asinTeilor = new AsinTeilor();
@@ -162,7 +169,56 @@ public class AsinTeilor {
         Double result = asin.get_mult_for_monomial(-2.0, -1.0);
         Assertions.assertEquals(1.0, result, DELTA);
     }
+    @Test
+    public void testCalculateReturnsNullForNullInput() {
 
+        Double result = asinTeilor.calculate(null);
+        assertNull(result);
+    }
+    
 
+    @Test
+    public void testValidateReturnsFalseForInputGreaterThanOne() {
+        boolean result = asinTeilor.validate(2.0);
+        assertFalse(result);
+    }
+
+    @Test
+    public void testValidateReturnsFalseForInputLessThanNegativeOne() {
+        boolean result = asinTeilor.validate(-2.0);
+        assertFalse(result);
+    }
+
+    @Test
+    public void testValidateReturnsTrueForInputEqualToOne() {
+        boolean result = asinTeilor.validate(1.0);
+        assertTrue(result);
+    }
+
+    @Test
+    public void testValidateReturnsTrueForInputEqualToNegativeOne() {
+        boolean result = asinTeilor.validate(-1.0);
+        assertTrue(result);
+    }
+
+    @Test
+    public void testCalculateReturnsZeroForInputEqualToZero() {
+        Double result = asinTeilor.calculate(0.0);
+        assertEquals(0.0, result, 0.0001);
+    }
+
+    @Test
+    public void testCalculateReturnsApproximateValueForInputBetweenZeroAndOne() {
+        Double result = asinTeilor.calculate(0.5);
+        assertEquals(0.5236, result, 0.0001);
+    }
+
+    @Test
+    public void testCalculateReturnsApproximateValueForInputBetweenNegativeOneAndZero() {
+        Double result = asinTeilor.calculate(-0.5);
+        assertEquals(-0.5236, result, 0.0001);
+    }
 
 }
+
+
