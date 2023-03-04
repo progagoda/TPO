@@ -14,6 +14,8 @@ public class AsinTeilor{
             current_monomial *= get_mult_for_monomial(n, x);
             result_sum += current_monomial;
             n += 1D;
+            System.out.println("current_monomial: " + current_monomial);
+            System.out.println("result_sum: " + result_sum);
         } while (Math.abs(current_monomial) > 0.001);
         return result_sum;
     }
@@ -26,23 +28,6 @@ public class AsinTeilor{
             return false;
         }
         return true;
-    }
-    public Double doublefact(Double x){
-        if (x <= 1){
-            return 1D;
-        }
-        Double accum = 1D;
-        Double mult = 1D;
-        if (x % 2 == 0){
-            mult = 2D;
-        }
-
-        while (mult <= x){
-            accum *= mult;
-            mult += 2;
-        }
-
-        return accum;
     }
     public Double fact(Double x){
         if (x <= 1){
@@ -63,14 +48,8 @@ public class AsinTeilor{
         if (n < 0){
             return null;
         }
-        Double numerator = 0D;
-        Double denominator = 1D;
-        if (Math.abs(x) <= 1){
-            numerator = fact(2 * n);
-            denominator = Math.pow(2, 2 * n) * Math.pow(fact(n), 2) * (2 * n + 1);
-        }
-        numerator = doublefact(2 * n + 1);
-        denominator = doublefact(2 * n) * Math.pow(2 * n + 1, 2);
+        Double numerator = fact(2 * n);
+        Double denominator = Math.pow(2, 2 * n) * Math.pow(fact(n), 2) * (2 * n + 1);
         return numerator / denominator;
     }
 }

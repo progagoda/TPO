@@ -3,8 +3,9 @@ package skewheap;
 import java.util.NoSuchElementException;
 
 public class SkewHeap {
-    private Node root;
-    private static class Node {
+    public Node root;
+
+    public static class Node {
         Double value;
         Node left;
         Node right;
@@ -19,10 +20,12 @@ public class SkewHeap {
     public SkewHeap() {
 
     }
+
     public void add(Double value) {
         Node current = new Node(value);
         root = merge(root,current);
     }
+
     public Double removeMin() {
         if(empty()){
             throw new NoSuchElementException();
@@ -33,9 +36,11 @@ public class SkewHeap {
             return min;
         }
     }
+
     public boolean empty() {
         return root == null;
     }
+
     public void merge(SkewHeap other) {
         if(other != null){
             this.root = merge(this.root, other.root);
@@ -43,7 +48,7 @@ public class SkewHeap {
         }
     }
 
-    private Node merge(Node root1, Node root2) {
+    public Node merge(Node root1, Node root2) {
         Node firstRoot = root1;
         Node secondRoot = root2;
         if(firstRoot == null){
