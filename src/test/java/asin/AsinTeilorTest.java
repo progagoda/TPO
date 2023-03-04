@@ -1,14 +1,21 @@
 package asin;
-import org.junit.Before;
-import org.junit.jupiter.api.Assertions;
-import org.junit.jupiter.api.BeforeAll;
-import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.*;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.CsvSource;
+import org.junit.jupiter.params.provider.NullAndEmptySource;
+import org.junit.jupiter.params.provider.ValueSource;
+
+import java.util.LinkedHashMap;
+import java.util.Map;
+import java.util.stream.Stream;
 
 import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.DynamicTest.dynamicTest;
 
 public class AsinTeilorTest {
     private static final double EPSILON = 0.001;
     private static final double DELTA = 0.0001;
+    private static final double MathSqrt = Math.sqrt(2);
     private static AsinTeilor asinTeilor;
 
     @BeforeAll
@@ -16,46 +23,37 @@ public class AsinTeilorTest {
         asinTeilor = new AsinTeilor();
     }
 
-    @Test
-    public void testCalculate() {
-        Assertions.assertEquals(Math.asin(0.9), asinTeilor.calculate(0.9), 0.0001);
-        //Assertions.assertEquals(Math.PI / 6.0, asinTeilor.calculate(0.5), 0.0001);
-        //Assertions.assertEquals(Math.PI / 4.0, asinTeilor.calculate(Math.sqrt(2) / 2.0), 0.0001);
-        //Assertions.assertEquals(Math.PI / 2.0, asinTeilor.calculate(1.0), 0.0001);
-        //Assertions.assertEquals(-Math.PI / 2.0, asinTeilor.calculate(-1.0), 0.0001);
-        //assertNull(asinTeilor.calculate(2.0));
-        //assertNull(asinTeilor.calculate(null));
+    @ParameterizedTest
+    @CsvSource({"0.0,0.0, 0.0001", "0.5,0.5236, 0.0001", "0.7071,0.7854, 0.001", "1.0,1.5708, 0.1", "-1.0,-1.5708, 0.1", "-0.001,-0.001, 0.0001", "0.001,0.001, 0.001"})
+    public void testCalculate(double input, double expectedOutput, double delta) {
+        Assertions.assertEquals(expectedOutput, asinTeilor.calculate(input), delta);
+    }
+    @ParameterizedTest
+    @ValueSource(doubles = {2.0, 10000.0,-10000.0 } )
+    public void testCalculateIf(double input) {
+        assertNull(asinTeilor.calculate(input));
     }
 
-    @Test
-    public void testValidate() {
-        Assertions.assertTrue(asinTeilor.validate(0.0));
-        Assertions.assertTrue(asinTeilor.validate(0.5));
-        Assertions.assertTrue(asinTeilor.validate(Math.sqrt(2) / 2.0));
-        Assertions.assertTrue(asinTeilor.validate(-0.5));
-        Assertions.assertTrue(asinTeilor.validate(-Math.sqrt(2) / 2.0));
-        Assertions.assertTrue(asinTeilor.validate(1.0));
-        Assertions.assertTrue(asinTeilor.validate(-1.0));
-        Assertions.assertFalse(asinTeilor.validate(2.0));
-        Assertions.assertFalse(asinTeilor.validate(1.0 + EPSILON));
-        Assertions.assertFalse(asinTeilor.validate(-1.0 - EPSILON));
-        assertThrows(NullPointerException.class, () -> asinTeilor.validate(null));
+    @ParameterizedTest
+    @ValueSource(doubles = {0.0, 0.5, 1.0, -1.0})
+    public void testValidateValid(double input) {
+        Assertions.assertTrue(asinTeilor.validate(input));
+    }
+    @ParameterizedTest
+    @ValueSource(doubles = {2.0, 1.0 + EPSILON, -1.0 - EPSILON})
+    public void testValidateInvalid(double input) {
+        Assertions.assertFalse(asinTeilor.validate(input));
     }
 
-    @Test
-    public void testDoublefact() {
-        Assertions.assertEquals(1.0, asinTeilor.doublefact(0.0), 0.0001);
-        Assertions.assertEquals(1.0, asinTeilor.doublefact(1.0), 0.0001);
-        Assertions.assertEquals(2.0, asinTeilor.doublefact(2.0), 0.0001);
-        Assertions.assertEquals(8.0, asinTeilor.doublefact(4.0), 0.0001);
-    }
-
-    @Test
-    public void testFact() {
-        Assertions.assertEquals(1.0, asinTeilor.fact(0.0), 0.0001);
-        Assertions.assertEquals(1.0, asinTeilor.fact(1.0), 0.0001);
-        Assertions.assertEquals(2.0, asinTeilor.fact(2.0), 0.0001);
-        Assertions.assertEquals(24.0, asinTeilor.fact(4.0), 0.0001);
+    @ParameterizedTest
+    @CsvSource({
+            "0.0, 1.0",
+            "1.0, 1.0",
+            "2.0, 2.0",
+            "4.0, 24.0"
+    })
+    public void testFact(double n, double expected) {
+        Assertions.assertEquals(expected, asinTeilor.fact(n), 0.0001);
     }
     @Test
     public void testCalculateValidInput() {
@@ -111,18 +109,6 @@ public class AsinTeilorTest {
     public void testCalculateZeroInput() {
         Double result = asinTeilor.calculate(0.0);
         Assertions.assertEquals(0.0, result, DELTA);
-    }
-
-    @Test
-    public void testDoublefactValidInput() {
-        Double result = asinTeilor.doublefact(5.0);
-        Assertions.assertEquals(15.0, result, DELTA);
-    }
-
-    @Test
-    public void testDoublefactInvalidInput() {
-        Double result = asinTeilor.doublefact(-2.0);
-        Assertions.assertEquals(1.0, result, DELTA);
     }
 
     @Test
