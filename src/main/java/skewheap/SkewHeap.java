@@ -47,11 +47,11 @@ public class SkewHeap {
     public void merge(SkewHeap other) {
         System.out.print("MH_");                        //1
         if(other != null) {                             //2
-            System.out.print("MHNE_");                  //3
+            System.out.print("NE_");                  //3
             this.root = merge(this.root, other.root);   //3
             other.root = null;                          //3
         } else {                                        //4
-            System.out.print("MHE_");                   //4
+            System.out.print("E_");                   //4
         }                                               //5
     }
 
@@ -60,20 +60,20 @@ public class SkewHeap {
         Node firstRoot = root1;                         //1
         Node secondRoot = root2;                        //1
         if(firstRoot == null){                          //2
-            System.out.print("MNFN_");                  //3
+            System.out.print("FN_");                  //3
             return secondRoot;                          //3
         }else if(secondRoot == null){                   //4
-            System.out.print("MNSN_");                  //5
+            System.out.print("SN_");                  //5
             return firstRoot;                           //5
         }                                               //6
         if(firstRoot.value <= secondRoot.value){        //7
-            System.out.print("MNF<=S_");                //8
+            System.out.print("F<=S_");                //8
             Node temp = firstRoot.right;                //8
             firstRoot.right = firstRoot.left;           //8
             firstRoot.left = merge(secondRoot,temp);    //8
             return firstRoot;                           //8
         } else {                                        //9
-            System.out.print("MNF>S_");                 //9
+            System.out.print("F>S_");                 //9
             return merge(secondRoot,firstRoot);         //9
         }                                               //10
 
