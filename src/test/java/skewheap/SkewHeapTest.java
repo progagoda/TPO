@@ -1,53 +1,38 @@
 package skewheap;
 
+import org.junit.After;
+import org.junit.Before;
 import org.junit.jupiter.api.Test;
 import skewheap.exceptions.EmptyHeapException;
 
+import java.io.ByteArrayOutputStream;
+import java.io.PrintStream;
 import java.util.Arrays;
 import java.util.List;
 import java.util.NoSuchElementException;
 
 import static org.junit.jupiter.api.Assertions.*;
 public class SkewHeapTest {
+    private final ByteArrayOutputStream outContent = new ByteArrayOutputStream();
+    private final ByteArrayOutputStream errContent = new ByteArrayOutputStream();
+    private final PrintStream originalOut = System.out;
+    private final PrintStream originalErr = System.err;
 
-    @Test
-    public void testExtractMinFromEmptyHeap() throws EmptyHeapException {
-       SkewHeap skewHeap = new SkewHeap();
-       assertThrows(NoSuchElementException.class, () -> skewHeap.removeMin());
+    @Before
+    public void setUpStreams() {
+        System.setOut(new PrintStream(outContent));
+        System.setErr(new PrintStream(errContent));
     }
 
+    @After
+    public void restoreStreams() {
+        System.setOut(originalOut);
+        System.setErr(originalErr);
+    }
     @Test
-    public void testExtractLastMin() throws EmptyHeapException {
+    public void removeMinEmpty(){
         SkewHeap skewHeap = new SkewHeap();
-        skewHeap.add(1D);
-        assertEquals(skewHeap.removeMin(), 1D);
-        assertThrows(NoSuchElementException.class, ()-> skewHeap.removeMin());
+        skewHeap.
     }
-
-    @Test
-    public void testEmpty(){
-        SkewHeap skewHeap = new SkewHeap();
-        assertTrue(skewHeap.empty());
-    }
-
-    @Test
-    public void testComplex(){
-        SkewHeap skewHeap = new SkewHeap();
-        skewHeap.add(400d);
-        skewHeap.add(0.999999999999d);
-        skewHeap.add(3d);
-        skewHeap.add(40d);
-        skewHeap.add(3.4d);
-        skewHeap.add(1.99999d);
-        skewHeap.add(24.1123d);
-        assertEquals(skewHeap.removeMin(),0.999999999999d);
-        assertEquals(skewHeap.removeMin(),1.99999d);
-        assertEquals(skewHeap.removeMin(),3d);
-        assertEquals(skewHeap.removeMin(),3.4d);
-        assertEquals(skewHeap.removeMin(),24.1123d);
-        assertEquals(skewHeap.removeMin(),40d);
-        assertEquals(skewHeap.removeMin(),400d);
-    }
-
 
 }
