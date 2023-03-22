@@ -1,91 +1,141 @@
 package skewheap;
 
+import jdk.nashorn.internal.runtime.regexp.joni.Regex;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import report.Report;
 import skewheap.exceptions.EmptyHeapException;
-import skewheap.SkewHeap;
 
 import java.util.Arrays;
 import java.util.List;
 import java.util.NoSuchElementException;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import static org.junit.jupiter.api.Assertions.*;
 public class SkewHeapTest {
 
+    public Report report;
+
+    @BeforeEach
+    public void init(){
+       this.report = new Report();
+    }
     @Test
-    public void testExtractMinFromEmptyHeap() throws EmptyHeapException {
-       SkewHeap skewHeap = new SkewHeap();
-       assertThrows(NoSuchElementException.class, () -> skewHeap.removeMin());
+    public void addTest(){
+       SkewHeap emptyHeap = new SkewHeap();
+       emptyHeap.add(1D, this.report);
+       assertEquals(emptyHeap.root.value, 1D);
+       assertEquals(report.report, "A_");
     }
 
     @Test
-    public void testExtractLastMin() throws EmptyHeapException {
-        SkewHeap skewHeap = new SkewHeap();
-        skewHeap.add(1D);
-        assertEquals(skewHeap.removeMin(), 1D);
-        assertThrows(NoSuchElementException.class, ()-> skewHeap.removeMin());
+    public void removeMinEmptyTest(){
+        SkewHeap emptyHeap = new SkewHeap();
+        assertThrows(NoSuchElementException.class, ()-> emptyHeap.removeMin(this.report));
+        assertEquals(report.report, "RM_E_");
     }
 
     @Test
-    public void testEmpty(){
-        SkewHeap skewHeap = new SkewHeap();
-        assertTrue(skewHeap.empty());
+    public void removeMinNotEmptyTest(){
+        SkewHeap heap = new SkewHeap();
+        Report addRep = new Report();
+        heap.add(1D, addRep);
+        heap.add(2D, addRep);
+        heap.add(13D, addRep);
+        heap.add(10D, addRep);
+        heap.add(100D, addRep);
+        Double minim = heap.removeMin(this.report);
+        assertEquals(minim, 1D);
+        assertEquals(report.report, "RM_NE_");
     }
 
     @Test
-    public void testComplex(){
-        SkewHeap skewHeap = new SkewHeap();
-        skewHeap.add(400d);
-        skewHeap.add(0.999999999999d);
-        skewHeap.add(3d);
-        skewHeap.add(40d);
-        skewHeap.add(3.4d);
-        skewHeap.add(1.99999d);
-        skewHeap.add(24.1123d);
-        assertEquals(skewHeap.removeMin(),0.999999999999d);
-        assertEquals(skewHeap.removeMin(),1.99999d);
-        assertEquals(skewHeap.removeMin(),3d);
-        assertEquals(skewHeap.removeMin(),3.4d);
-        assertEquals(skewHeap.removeMin(),24.1123d);
-        assertEquals(skewHeap.removeMin(),40d);
-        assertEquals(skewHeap.removeMin(),400d);
+    public void removeMinOneElemTest(){
+        SkewHeap heap = new SkewHeap();
+        Report addRep = new Report();
+        heap.add(13D, addRep);
+        Double minim = heap.removeMin(this.report);
+        assertEquals(minim, 13D);
+        assertEquals(report.report, "RM_NE_");
     }
+
     @Test
-    void testMerge() {
-        SkewHeap skewHeap = new SkewHeap();
-        // Create two binary search trees to merge
-        SkewHeap.Node root1 = new  SkewHeap.Node(5D);
-        root1.left = new  SkewHeap.Node(3D);
-        root1.right = new  SkewHeap.Node(7D);
-        root1.left.left = new SkewHeap.Node(1D);
-
-        SkewHeap.Node root2 = new SkewHeap.Node(4D);
-        root2.left = new SkewHeap.Node(2D);
-        root2.right = new SkewHeap.Node(6D);
-
-        // Expected output after merging the two trees
-        SkewHeap.Node expected = new SkewHeap.Node(5D);
-        expected.left = new SkewHeap.Node(4D);
-        expected.right = new SkewHeap.Node(7D);
-        expected.left.left = new SkewHeap.Node(3D);
-        expected.left.right = new SkewHeap.Node(6D);
-        expected.left.left.left = new SkewHeap.Node(1D);
-        expected.left.left.right = new SkewHeap.Node(2D);
-
-        // Test the merge method
-        SkewHeap.Node actual = skewHeap.merge(root1, root2);
-        assertEquals(expected, actual);
-
-        // Test merge with null root1
-        SkewHeap.Node actual2 = skewHeap.merge(null, root2);
-        assertEquals(root2, actual2);
-
-        // Test merge with null root2
-        SkewHeap.Node actual3 = skewHeap.merge(root1, null);
-        assertEquals(root1, actual3);
-
-        // Test merge with both roots null
-        SkewHeap.Node actual4 = skewHeap.merge(null, null);
-        assertNull(actual4);
+    public void voidMergeNullTest(){
+        SkewHeap heap1 = new SkewHeap();
+        heap1.merge(null, this.report);
+        assertEquals(this.report.report, "VM_ON_");
     }
 
+    @Test
+    public void voidMergeTest(){
+        SkewHeap heap1 = new SkewHeap();
+        SkewHeap heap2 = new SkewHeap();
+        List<Double> vals1 = Arrays.asList(10d, 2d, 30d, 100d, 1d, 3.33d);
+        List<Double> vals2 = Arrays.asList(3d, 32d, 4d);
+        Report addRep = new Report();
+        vals1.stream().forEach(elem -> heap1.add(elem, addRep));
+        vals2.stream().forEach(elem -> heap2.add(elem, addRep));
+        heap1.merge(heap2, this.report);
+        assertEquals(this.report.report, "VM_ONE_");
+    }
+
+    @Test
+    public void nodeMergeFirstNullTest(){
+        SkewHeap heap1 = new SkewHeap();
+        heap1.add(1D, new Report());
+        SkewHeap.Node res = heap1.merge(null, heap1.root, this.report);
+        assertEquals(this.report.report, "NM_FRN_");
+    }
+
+    @Test
+    public void nodeMergeSecondNullTest(){
+        SkewHeap heap1 = new SkewHeap();
+        heap1.add(1D, new Report());
+        SkewHeap.Node res = heap1.merge(heap1.root, null, this.report);
+        assertEquals(this.report.report, "NM_SRN_");
+    }
+
+
+    @Test
+    public void nodeMergeEqTest(){
+        SkewHeap heap1 = new SkewHeap();
+        SkewHeap heap2 = new SkewHeap();
+        Report addRep = new Report();
+        heap1.add(1D, addRep);
+        heap2.add(1D, addRep);
+        SkewHeap.Node res = heap1.merge(heap1.root, heap2.root, this.report);
+        SkewHeap resHeap = new SkewHeap();
+        resHeap.root = res;
+        assertEquals(this.report.report, "NM_FR<=SR_NM_SRN_");
+        assertEquals(resHeap.removeMin(new Report()), 1D);
+    }
+
+    @Test
+    public void nodeMergeFirstBiggerTest(){
+        SkewHeap heap1 = new SkewHeap();
+        SkewHeap heap2 = new SkewHeap();
+        Report addRep = new Report();
+        heap1.add(10D, addRep);
+        heap2.add(1D, addRep);
+        SkewHeap.Node res = heap1.merge(heap1.root, heap2.root, this.report);
+        SkewHeap resHeap = new SkewHeap();
+        resHeap.root = res;
+        assertEquals(this.report.report, "NM_FR>SR_NM_FR<=SR_NM_SRN_");
+        assertEquals(resHeap.removeMin(new Report()), 1D);
+    }
+
+    @Test
+    public void nodeMergeSecondBiggerTest(){
+        SkewHeap heap1 = new SkewHeap();
+        SkewHeap heap2 = new SkewHeap();
+        Report addRep = new Report();
+        heap1.add(34D, addRep);
+        heap2.add(34234D, addRep);
+        SkewHeap.Node res = heap1.merge(heap1.root, heap2.root, this.report);
+        SkewHeap resHeap = new SkewHeap();
+        resHeap.root = res;
+        assertEquals(this.report.report, "NM_FR<=SR_NM_SRN_");
+        assertEquals(resHeap.removeMin(new Report()), 34D);
+    }
 }
