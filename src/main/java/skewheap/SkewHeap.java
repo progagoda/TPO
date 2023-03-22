@@ -4,7 +4,7 @@ import java.util.NoSuchElementException;
 
 public class SkewHeap {
     private Node root;
-    private static class Node {
+     static class Node {
         Double value;
         Node left;
         Node right;
@@ -43,21 +43,28 @@ public class SkewHeap {
         }
     }
 
-    private Node merge(Node root1, Node root2) {
+    Node merge(Node root1, Node root2) {
         Node firstRoot = root1;
         Node secondRoot = root2;
+        String check = "NM";
         if(firstRoot == null){
+            check+="_FN";
             return secondRoot;
-        }else if(secondRoot == null){
+        }else
+            check+="_E";
+            if(secondRoot == null){
+            check+="_SN";
             return firstRoot;
         }
         if(firstRoot.value <= secondRoot.value){
+            check+="_CFS";
             Node temp = firstRoot.right;
             firstRoot.right = firstRoot.left;
             firstRoot.left = merge(secondRoot,temp);
             return firstRoot;
         }
         else{
+            check+="_ECFS";
             return merge(secondRoot,firstRoot);
         }
 
